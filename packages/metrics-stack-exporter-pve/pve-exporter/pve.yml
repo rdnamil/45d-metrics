@@ -1,0 +1,13 @@
+# managed by metrics-stack-exporter-pve
+# Populate via `monitoring-configure-pve` rather than editing by hand where
+# possible -- it validates and restarts the service for you. CHANGE_ME
+# values below are placeholders until PVE credentials are configured.
+#
+# Recommended: a dedicated PVE API user with the read-only PVEAuditor role
+# and an API token (not a password) -- see
+# https://pve.proxmox.com/wiki/User_Management#pveum_tokens
+default:
+  user: "prometheus@pve"
+  token_name: "monitoring"
+  token_value: CHANGE_ME
+  verify_ssl: false
