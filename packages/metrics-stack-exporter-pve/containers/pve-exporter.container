@@ -1,0 +1,39 @@
+# managed by metrics-stack
+# Version control: bump the Image= tag below, commit, then
+# `sudo systemctl daemon-reload && sudo systemctl restart pve-exporter`
+# to roll it out. Check
+# https://hub.docker.com/r/prompve/prometheus-pve-exporter/tags for
+# newer releases before bumping.
+#
+# Unlike the node/smartctl/ipmi exporters, this one polls the Proxmox VE
+# API remotely (blackbox_exporter-style: one exporter, many targets) using
+# credentials in /etc/pve-exporter/pve.yml -- normally written by
+# monitoring-configure-pve, not edited by hand. It joins the shared
+# 'metrics' Podman network (like Alertmanager/Grafana) rather than using
+# Network=host, since it's a single central exporter, not a per-host agent
+# -- no --privileged either; runs as the image's own non-root user.
+[Unit]
+Description=Proxmox VE Exporter
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=docker.io/prompve/prometheus-pve-exporter:3.9.0
+ContainerName=pve-exporter
+Network=metrics.network
+PublishPort=9221:9221
+
+# :U chowns the host directory to the image's internal non-root UID so
+# pve.yml (holding an API token secret) can stay root:root mode 0640 on the
+# host -- unreadable to other local users -- while still being readable
+# inside the container. See monitoring-configure-pve.
+Volume=/etc/pve-exporter:/etc/pve-exporter:Z,ro,U
+
+Exec=--config.file=/etc/pve-exporter/pve.yml --web.listen-address=[::]:9221
+
+[Service]
+Restart=always
+TimeoutStartSec=60
+
+[Install]
+WantedBy=multi-user.target default.target
