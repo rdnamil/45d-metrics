@@ -9,7 +9,7 @@
 # than installing network-independent.
 PKG_NAME="metrics-stack-exporter-pve"
 PKG_DESCRIPTION="prometheus-pve-exporter for metrics-stack (Proxmox VE cluster/node metrics via the PVE API), with monitoring-configure-pve for credentials + scrape-job setup. Joins the shared 'metrics' Podman network; depends on metrics-stack-common and metrics-stack-prometheus (uses its scrape_configs.d drop-in support)."
-PKG_DEPENDS=(podman metrics-stack-common metrics-stack-prometheus)
+PKG_DEPENDS=(podman)
 
 # containers/ is staged to /etc/containers/systemd/ by convention (see
 # packaging/build.sh) -- only files outside that convention are listed here.
